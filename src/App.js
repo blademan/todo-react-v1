@@ -4,54 +4,56 @@ import { v4 as uuidv4 } from 'uuid';
 import TodoList from './components/TodoList';
 import Form from './components/Form';
 import TodoActions from './components/TodoActions';
+import useLocalStorage from './hooks/useLocalStorage';
 
 function App() {
- const [toDos, setToDos] = useState([
+ const [localStorage, setLocalStorage] = useLocalStorage('toDos', [
   {
    id: uuidv4(),
-   text: 'This is a todo',
+   text: 'test',
    completed: false,
   },
  ]);
+
  const [error, setError] = useState(false);
 
  const addToDos = (value) => {
   if (value) {
    setError(false);
-   const newToDos = [...toDos];
+   const newToDos = [...localStorage];
 
    newToDos.push({
     id: uuidv4(),
     text: value,
     completed: false,
    });
-   setToDos(newToDos);
+   setLocalStorage(newToDos);
   } else {
    setError(true);
   }
  };
 
  const resetHandler = () => {
-  setToDos([]);
+  setLocalStorage([]);
+
   setError(false);
  };
 
  const removeCompleteHandler = () => {
-  setToDos(toDos.filter((todo) => !todo.completed));
+  setLocalStorage(localStorage.filter((todo) => !todo.completed));
  };
 
  const deleteToDos = (id) => {
-  const newToDos = toDos.filter((todo) => todo.id !== id);
+  const newToDos = localStorage.filter((todo) => todo.id !== id);
 
-  setToDos(newToDos);
+  setLocalStorage(newToDos);
  };
 
  const completedHandler = (id) => {
-  const newToDos = toDos.map((todo) =>
+  const newToDos = localStorage.map((todo) =>
    todo.id === id ? { ...todo, completed: !todo.completed } : { ...todo },
   );
-
-  setToDos(newToDos);
+  setLocalStorage(newToDos);
  };
 
  useEffect(() => {
@@ -64,18 +66,27 @@ function App() {
   };
  }, [error]);
 
+ const completedToDosCount = localStorage.filter((todo) => todo.completed).length;
+
  return (
   <main className="bg-blue-900 h-screen flex flex-col items-center pt-20">
    <h1 className="text-white text-5xl tracking-wider py-6">Todo App</h1>
    <Form addToDos={addToDos} />
-   <TodoActions resetHandler={resetHandler} removeCompleteHandler={removeCompleteHandler} />
+   {localStorage.length > 0 ? (
+    <TodoActions resetHandler={resetHandler} removeCompleteHandler={removeCompleteHandler} />
+   ) : null}
    {error && <p className="text-red-500 pt-4">Add some text...</p>}
 
-   {toDos <= 0 ? (
+   {localStorage <= 0 ? (
     <p className="text-white text-3xl pt-10">Todo list is empty</p>
    ) : (
-    <TodoList toDos={toDos} deleteToDos={deleteToDos} completedHandler={completedHandler} />
+    <TodoList toDos={localStorage} deleteToDos={deleteToDos} completedHandler={completedHandler} />
    )}
+   {completedToDosCount > 0 ? (
+    <h2 className="pt-6 text-white">{`You have completed ${completedToDosCount} ${
+     completedToDosCount === 1 ? 'ToDo' : 'ToDos'
+    }`}</h2>
+   ) : null}
   </main>
  );
 }

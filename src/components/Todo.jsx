@@ -5,14 +5,14 @@ export default function Todo({ text, deleteToDos, id, completedHandler, complete
  return (
   <li
    className={`${
-    completed ? 'bg-gray-300' : 'bg-white'
-   } flex space-x-4 justify-between items-center  w-full p-4 rounded-md`}>
+    completed ? 'bg-transparent  ' : 'bg-white'
+   } flex border space-x-4 justify-between items-center  w-full p-4 rounded-md`}>
    <div className="flex space-x-4 items-center">
     <FcTodoList className="text-3xl" />
     <p
      className={`${
-      completed ? 'line-through' : null
-     } text-gray-700 text-lg font-bold decoration-pink-500 decoration-4`}>
+      completed ? 'line-through text-white' : 'text-gray-700'
+     }  text-lg font-bold decoration-pink-500 decoration-2`}>
      {text}
     </p>
    </div>
